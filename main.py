@@ -8,6 +8,58 @@ def book_list_view(library):
             print(book_title)
 
 
+def get_year():
+    while True:
+        try:
+            year = int(input("Введите год издания книги: "))
+
+            if year > 0:
+                return year
+            else:
+                print("Ошибка: год издания должен быть положительным числом.")
+        except ValueError:
+            print("Ошибка: год издания должен быть числом.")
+
+
+def get_book_info():
+    title = input("Введите название книги: ")
+    author = input("Введите автора книги: ")
+    year = get_year()
+
+    return title, author, year
+
+
+def get_update_answer():
+    while True:
+        answer = input("\nКнига уже есть. Обновить информацию? да/нет: ").strip().lower()
+
+        if answer == "да" or answer == "нет":
+            return answer
+
+        print("Ошибка: введите 'да' или 'нет'.")
+
+
+def add_book(library, title, author, year):
+    if title in library:
+        answer = get_update_answer()
+
+        if answer == "да":
+            library[title]["author"] = author
+            library[title]["year"] = year
+
+            print(f"\nИнформация о книге '{title}' успешно обновлена.")
+        else:
+            print(f"\nИнформация о книге '{title}' не была изменена.")
+    else:
+        library[title] = {
+            "author": author,
+            "year": year,
+            "is_available": None
+        }
+        print(f"\nКнига '{title}' успешно добавлена.")
+
+
+
 def main():
     library = {
         "Гарри Поттер и филосовский камень": {
@@ -32,6 +84,10 @@ def main():
         }
     }
 
+    title, author, year = get_book_info()
+    add_book(library, title, author, year)
+
+    print("\nСписок книг в библиотеке:")
     book_list_view(library)
 
 
