@@ -62,8 +62,12 @@ def add_book(library, title, author, year):
     print(message)
 
 
-def get_book_title():
-    return input("Введите название книги: ").strip()
+def get_book_title(text):
+    return input(text).strip()
+
+
+# def get_book_title():
+#     return input("Введите название книги: ").strip()
 
 
 def remove_book(library, title):
@@ -72,6 +76,32 @@ def remove_book(library, title):
         print(f"Книга {title} была успешно удалена.")
     else:
         print(f"Книга {title} не найдена.")
+
+
+def issue_book(library, title):
+    if title not in library:
+        print(f"Книга '{title}' не найдена.")
+        return
+
+    if library[title]["is_available"] is False:
+        print(f"Книга '{title}' уже выдана.")
+        return
+
+    library[title]["is_available"] = False
+    print(f"Книга '{title}' выдана.")
+
+
+def return_book(library, title):
+    if title not in library:
+        print(f"Книга '{title}' не найдена.")
+        return
+
+    if library[title]["is_available"] is True:
+        print(f"Книга '{title}' уже находится в библиотеке.")
+        return
+
+    library[title]["is_available"] = True
+    print(f"Книга '{title}' возвращена в библиотеку.")
 
 
 def main():
@@ -101,8 +131,14 @@ def main():
     title, author, year = get_book_info()
     add_book(library, title, author, year)
 
-    title_to_remove = get_book_title()
+    title_to_remove = get_book_title("Введите название книги для удаления: ")
     remove_book(library, title_to_remove)
+
+    title_to_issue = get_book_title("Введите название книги для выдачи: ")
+    issue_book(library, title_to_issue)
+
+    title_to_return = get_book_title("Введите название книги для возврата: ")
+    return_book(library, title_to_return)
 
     print("\nСписок книг в библиотеке:")
     book_list_view(library)
