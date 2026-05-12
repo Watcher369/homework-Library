@@ -62,6 +62,18 @@ def add_book(library, title, author, year):
     print(message)
 
 
+def get_book_title():
+    return input("Введите название книги: ").strip()
+
+
+def remove_book(library, title):
+    if title in library:
+        del library[title]
+        print(f"Книга {title} была успешно удалена.")
+    else:
+        print(f"Книга {title} не найдена.")
+
+
 def main():
     library = {
         "Гарри Поттер и филосовский камень": {
@@ -88,6 +100,9 @@ def main():
 
     title, author, year = get_book_info()
     add_book(library, title, author, year)
+
+    title_to_remove = get_book_title()
+    remove_book(library, title_to_remove)
 
     print("\nСписок книг в библиотеке:")
     book_list_view(library)
