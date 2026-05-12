@@ -43,21 +43,23 @@ def add_book(library, title, author, year):
     if title in library:
         answer = get_update_answer()
 
-        if answer == "да":
-            library[title]["author"] = author
-            library[title]["year"] = year
+        if answer == "нет":
+            print(f"Информация о книге '{title}' не была изменена.")
+            return
 
-            print(f"\nИнформация о книге '{title}' успешно обновлена.")
-        else:
-            print(f"\nИнформация о книге '{title}' не была изменена.")
+        is_available = library[title]["is_available"]
+        message = f"Информация о книге '{title}' успешно обновлена."
     else:
-        library[title] = {
-            "author": author,
-            "year": year,
-            "is_available": None
-        }
-        print(f"\nКнига '{title}' успешно добавлена.")
+        is_available = None
+        message = f"Книга '{title}' успешно добавлена."
 
+    library[title] = {
+        "author": author,
+        "year": year,
+        "is_available": is_available
+    }
+
+    print(message)
 
 
 def main():
