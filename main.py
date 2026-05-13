@@ -104,6 +104,29 @@ def return_book(library, title):
     print(f"Книга '{title}' возвращена в библиотеку.")
 
 
+def find_book_title(library, user_title):
+    user_title = user_title.strip().lower()
+
+    for library_title in library:
+        if library_title.lower() == user_title:
+            return library_title
+
+    return None
+
+def find_book(library, title):
+    found_title = find_book_title(library, title)
+
+    if found_title:
+        print(
+            f"Название: {found_title}\n"
+            f"Автор: {library[found_title]['author']}\n"
+            f"Год издания: {library[found_title]['year']}\n"
+            f"Наличие: {library[found_title]['is_available']}"
+        )
+    else:
+        print(f"Книга '{title}' не найдена.")
+
+
 def main():
     library = {
         "Гарри Поттер и филосовский камень": {
@@ -139,6 +162,9 @@ def main():
 
     title_to_return = get_book_title("Введите название книги для возврата: ")
     return_book(library, title_to_return)
+
+    title_to_find = get_book_title("Введите название книги для поиска: ")
+    find_book(library, title_to_find)
 
     print("\nСписок книг в библиотеке:")
     book_list_view(library)
