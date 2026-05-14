@@ -173,20 +173,20 @@ def find_book_action(library):
 
 def main(library):
     menu = {
-        "1": ["Показать список книг", book_list_view],
-        "2": ["Добавить книгу", add_book_action],
-        "3": ["Удалить книгу", remove_book_action],
-        "4": ["Выдать книгу", issue_book_action],
-        "5": ["Вернуть книгу", return_book_action],
-        "6": ["Найти книгу", find_book_action],
-        "0": ["Завершить программу", None],
+        "1": {"description": "Показать список книг", "action": book_list_view},
+        "2": {"description": "Добавить книгу", "action": add_book_action},
+        "3": {"description": "Удалить книгу", "action": remove_book_action},
+        "4": {"description": "Выдать книгу", "action": issue_book_action},
+        "5": {"description": "Вернуть книгу", "action": return_book_action},
+        "6": {"description": "Найти книгу", "action": find_book_action},
+        "0": {"description": "Завершить программу", "action": None}
     }
 
     while True:
         print("\nМеню:")
 
         for key, value in menu.items():
-            print(f"{key}. {value[0]}")
+            print(f"{key}. {value['description']}")
 
         choice = input("\nВыберите действие: ").strip()
 
@@ -195,7 +195,7 @@ def main(library):
             break
 
         if choice in menu:
-            menu[choice][1](library)
+            menu[choice]["action"](library)
         else:
             print("Ошибка: выберите пункт из меню.")
 
