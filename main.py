@@ -40,14 +40,17 @@ def get_update_answer():
 
 
 def add_book(library, title, author, year):
-    if title in library:
+    found_title = find_book_title(library, title)
+
+    if found_title:
         answer = get_update_answer()
 
         if answer == "нет":
-            print(f"Информация о книге '{title}' не была изменена.")
+            print(f"Информация о книге '{found_title}' не была изменена.")
             return
 
         is_available = library[title]["is_available"]
+        title = found_title
         message = f"Информация о книге '{title}' успешно обновлена."
     else:
         is_available = None
@@ -66,42 +69,44 @@ def get_book_title(text):
     return input(text).strip()
 
 
-# def get_book_title():
-#     return input("Введите название книги: ").strip()
-
-
 def remove_book(library, title):
-    if title in library:
-        del library[title]
-        print(f"Книга {title} была успешно удалена.")
+    found_title = find_book_title(library, title)
+
+    if found_title:
+        del library[found_title]
+        print(f"Книга {found_title} была успешно удалена.")
     else:
         print(f"Книга {title} не найдена.")
 
 
 def issue_book(library, title):
-    if title not in library:
+    found_title = find_book_title(library, title)
+
+    if not found_title:
         print(f"Книга '{title}' не найдена.")
         return
 
-    if library[title]["is_available"] is False:
-        print(f"Книга '{title}' уже выдана.")
+    if library[found_title]["is_available"] is False:
+        print(f"Книга '{found_title}' уже выдана.")
         return
 
-    library[title]["is_available"] = False
-    print(f"Книга '{title}' выдана.")
+    library[found_title]["is_available"] = False
+    print(f"Книга '{found_title}' выдана.")
 
 
 def return_book(library, title):
-    if title not in library:
+    found_title = find_book_title(library, title)
+
+    if not found_title:
         print(f"Книга '{title}' не найдена.")
         return
 
-    if library[title]["is_available"] is True:
-        print(f"Книга '{title}' уже находится в библиотеке.")
+    if library[found_title]["is_available"] is True:
+        print(f"Книга '{found_title}' уже находится в библиотеке.")
         return
 
-    library[title]["is_available"] = True
-    print(f"Книга '{title}' возвращена в библиотеку.")
+    library[found_title]["is_available"] = True
+    print(f"Книга '{found_title}' возвращена в библиотеку.")
 
 
 def find_book_title(library, user_title):
@@ -113,21 +118,89 @@ def find_book_title(library, user_title):
 
     return None
 
+
+def get_availability_text(is_available):
+    if is_available is None:
+        return "Книга в библиотеке, но ее статус не определен"
+    elif is_available is False:
+        return "Книга выдана"
+    elif is_available is True:
+        return "Книга доступна"
+    else:
+        return "Некорректный статус книги"
+
+
 def find_book(library, title):
     found_title = find_book_title(library, title)
 
     if found_title:
+        availability_text = get_availability_text(library[found_title]["is_available"])
+
         print(
             f"Название: {found_title}\n"
             f"Автор: {library[found_title]['author']}\n"
             f"Год издания: {library[found_title]['year']}\n"
-            f"Наличие: {library[found_title]['is_available']}"
+            f"Наличие: {availability_text}"
         )
     else:
         print(f"Книга '{title}' не найдена.")
 
 
-def main():
+def add_book_action(library):
+    title, author, year = get_book_info()
+    add_book(library, title, author, year)
+
+
+def remove_book_action(library):
+    title = get_book_title("Введите название книги для удаления: ")
+    remove_book(library, title)
+
+
+def issue_book_action(library):
+    title = get_book_title("Введите название книги для выдачи: ")
+    issue_book(library, title)
+
+
+def return_book_action(library):
+    title = get_book_title("Введите название книги для возврата: ")
+    return_book(library, title)
+
+
+def find_book_action(library):
+    title = get_book_title("Введите название книги для поиска: ")
+    find_book(library, title)
+
+
+def main(library):
+    menu = {
+        "1": ["Показать список книг", book_list_view],
+        "2": ["Добавить книгу", add_book_action],
+        "3": ["Удалить книгу", remove_book_action],
+        "4": ["Выдать книгу", issue_book_action],
+        "5": ["Вернуть книгу", return_book_action],
+        "6": ["Найти книгу", find_book_action],
+        "0": ["Завершить программу", None],
+    }
+
+    while True:
+        print("\nМеню:")
+
+        for key, value in menu.items():
+            print(f"{key}. {value[0]}")
+
+        choice = input("\nВыберите действие: ").strip()
+
+        if choice == "0":
+            print("Программа завершена.")
+            break
+
+        if choice in menu:
+            menu[choice][1](library)
+        else:
+            print("Ошибка: выберите пункт из меню.")
+
+
+if __name__ == "__main__":
     library = {
         "Гарри Поттер и филосовский камень": {
             "author": "Дж. К. Роулинг",
@@ -151,23 +224,4 @@ def main():
         }
     }
 
-    title, author, year = get_book_info()
-    add_book(library, title, author, year)
-
-    title_to_remove = get_book_title("Введите название книги для удаления: ")
-    remove_book(library, title_to_remove)
-
-    title_to_issue = get_book_title("Введите название книги для выдачи: ")
-    issue_book(library, title_to_issue)
-
-    title_to_return = get_book_title("Введите название книги для возврата: ")
-    return_book(library, title_to_return)
-
-    title_to_find = get_book_title("Введите название книги для поиска: ")
-    find_book(library, title_to_find)
-
-    print("\nСписок книг в библиотеке:")
-    book_list_view(library)
-
-
-main()
+    main(library)
